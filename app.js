@@ -8,20 +8,19 @@ const app = express()
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
+
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
+    User.findById(id, function(err, user) {
+      done(err, user);
+    });
   });
-});
 passport.use(new LocalStrategy(
     async (username, password, done) => {
         const user = await User.findOne({where: { email: username}})
-        console.log(user.password)
-
         if(!user){
             return done(null, false, { message: 'Incorrect username.' })
         }
@@ -29,21 +28,6 @@ passport.use(new LocalStrategy(
             return done(null, false, { message: 'Incorrect password.' })
         }
         return done(null, user)
-
-        /*if(!row){
-            console.log('Not Found')
-        }
-        User.findOne({where: { email: username }}, function(err, user) {
-            console.log(user)
-            if (err) { return done(err); }
-            if (!user) {
-                return done(null, false, { message: 'Incorrect username.' });
-            }
-            if (!user.validPassword(password)) {
-                return done(null, false, { message: 'Incorrect password.' });
-            }
-            return done(null, user);
-            });*/
     }
 ));
 
@@ -53,10 +37,14 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 
-app.get('/', passport.authenticate('local'), (req, res) => {
-    console.log(req)
-    res.send('Hello World')
-  });
+app.get('/login', passport.authenticate('local'), (req, res) => {
+    res.send('Logged In Successful')
+});
+
+app.get('/m', (req, res) => {
+    console.log('Messages Endpoint')
+    res.send('Messages')
+})
 
 app.listen(process.env.PORT, async () => {
     console.log(`Example app listening at http://localhost:${process.env.PORT}`)
