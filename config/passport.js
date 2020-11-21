@@ -1,15 +1,17 @@
-const User = require('../src/models/user')
+const sequelize = require('../src/db/db');
+const { DataTypes } = require("sequelize")
+const User = require('../src/models/user')(sequelize, DataTypes)
 const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
 
 passport.use(new LocalStrategy(
     async (username, password, done) => {
-        const user = await User.findOne({where: { email: username}})
+        const user = await User.findOne({where: { username: username}})
         if(!user){
-            return done(null, false, { message: 'Incorrect username.' })
+            return done(null, false)
         }
-        if(user.password !== password){
-            return done(null, false, { message: 'Incorrect password.' })
+        if(!user.validPassword(password)){
+            return done(null, false)
         }
         return done(null, user)
     }

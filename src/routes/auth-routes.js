@@ -1,6 +1,9 @@
 const express = require('express')
 const passport = require('passport')
 const authRouter = express.Router()
+const sequelize = require('../db/db');
+const { DataTypes } = require("sequelize")
+const User = require('../models/user')(sequelize, DataTypes)
 
 const isAuthenticated = (req,res,next) => {
     if(req.user)
@@ -11,19 +14,18 @@ const isAuthenticated = (req,res,next) => {
        })
 }
 
-
-authRouter.get('/login', passport.authenticate('local'), (req, res) => {
+authRouter.post('/login', passport.authenticate('local'), (req, res) => {
     res.send('Logged In Successful')
 });
-authRouter.use(isAuthenticated)
-authRouter.get('/m', (req, res) => {
-    res.send('Messages')
-})
 
-authRouter.get('/check', (req, res) => {
-    res.status(200).json({status: 'Confirmed'})
+authRouter.put('/register', async (req, res) => {
+    console.log(req.query)
+    await User.create({username: req.query.username, password: req.query.password})
+    res.status(201).send('Registered')
 })
-authRouter.get('/logout', (req, res) => {
+authRouter.use(isAuthenticated)
+
+authRouter.post('/logout', (req, res) => {
     req.logout()
     res.send('log out successful')
 })
