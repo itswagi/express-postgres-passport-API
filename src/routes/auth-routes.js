@@ -19,15 +19,22 @@ authRouter.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 authRouter.put('/register', async (req, res) => {
-    console.log(req.query)
-    await User.create({username: req.query.username, password: req.query.password})
-    res.status(201).send('Registered')
+    try{
+        if (req.query.password === ""){
+            throw {errors: [{message: 'Invalid Password'}], error: new Error()}
+        }
+        await User.create({username: req.query.username, password: req.query.password})
+        res.status(201).send('Registered')
+    }catch(err){
+        res.status(400).json(err.errors[0].message)
+    }
+    
 })
 authRouter.use(isAuthenticated)
 
 authRouter.post('/logout', (req, res) => {
     req.logout()
-    res.send('log out successful')
+    res.status(204)
 })
 
 module.exports = authRouter

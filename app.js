@@ -9,7 +9,6 @@ const passport = require('passport')
 require('./config/passport')
 const authRouter = require('./src/routes/auth-routes')
 
-
 app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized:true}));

@@ -16,15 +16,14 @@ module.exports = function(sequelize, Sequelize) {
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
+            notEmpty: true,
         },
     },{
         timestamps: false,
         
     })
     User.prototype.validPassword = function(password){
-        console.log(password)
-        console.log(this.password)
         return bcrypt.compare(this.password, password)
     }
     User.beforeCreate(async (user, options) => {
