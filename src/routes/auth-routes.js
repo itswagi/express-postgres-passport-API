@@ -15,7 +15,7 @@ const isAuthenticated = (req,res,next) => {
 }
 
 authRouter.post('/login', passport.authenticate('local'), (req, res) => {
-    res.send('Logged In Successful')
+    res.status(200).send('Logged In Successful')
 });
 
 authRouter.put('/register', async (req, res) => {
@@ -34,7 +34,7 @@ authRouter.use(isAuthenticated)
 
 authRouter.post('/logout', (req, res) => {
     req.logout()
-    res.status(204)
+    res.status(204).send()
 })
 
 module.exports = authRouter
