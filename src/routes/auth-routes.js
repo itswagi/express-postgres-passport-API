@@ -63,6 +63,17 @@ authRouter.put('/update', (req,res) => {
     })
 })
 
+//Delete User
+authRouter.delete('/delete', async (req, res) => {
+    try{
+        await User.destroy({where: {id: req.user.id}})
+        res.status(204)
+    }catch(err){
+        res.send(400)
+    }
+    
+})
+
 authRouter.post('/logout', (req, res) => {
     req.logout()
     res.status(204).send()
