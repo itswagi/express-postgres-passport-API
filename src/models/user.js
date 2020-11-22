@@ -23,11 +23,16 @@ module.exports = function(sequelize, Sequelize) {
         timestamps: false,
         
     })
-    User.prototype.validPassword = function(password){
-        return bcrypt.compare(this.password, password)
+    User.prototype.validPassword = async function (password) {
+        const val = await bcrypt.compare(password, this.password);
+        console.log(val);
+        return val;
     }
     User.beforeCreate(async (user, options) => {
         return user.password = await bcrypt.hash(user.password, 10)
-      });
+    })
+    User.beforeUpdate(async (user, options) => {
+        return user.password = await bcrypt.hash(user.password, 10)
+    })
     return User
 }

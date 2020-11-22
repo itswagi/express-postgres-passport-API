@@ -15,7 +15,7 @@ app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized:true})
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use('/', authRouter)
+app.use('/user', authRouter)
 
 app.listen(process.env.PORT, async () => {
     console.log(`Example app listening at http://localhost:${process.env.PORT}`)

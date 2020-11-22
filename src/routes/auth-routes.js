@@ -2,7 +2,7 @@ const express = require('express')
 const passport = require('passport')
 const authRouter = express.Router()
 const sequelize = require('../db/db');
-const { DataTypes } = require("sequelize")
+const { DataTypes } = require("sequelize");
 const User = require('../models/user')(sequelize, DataTypes)
 
 const isAuthenticated = (req,res,next) => {
@@ -14,11 +14,20 @@ const isAuthenticated = (req,res,next) => {
        })
 }
 
-authRouter.post('/login', passport.authenticate('local'), (req, res) => {
+const isLoggedIn = (req,res,next) => {
+    if(!req.user)
+        return next()
+    else
+        return res.send('Already Logged in')
+}
+
+//Login User
+authRouter.post('/login', isLoggedIn, passport.authenticate('local'), (req, res) => {
     res.status(200).send('Logged In Successful')
 });
 
-authRouter.put('/register', async (req, res) => {
+//Create User
+authRouter.put('/register', isLoggedIn, async (req, res) => {
     try{
         if (req.query.password === ""){
             throw {errors: [{message: 'Invalid Password'}], error: new Error()}
@@ -31,6 +40,28 @@ authRouter.put('/register', async (req, res) => {
     
 })
 authRouter.use(isAuthenticated)
+
+//Read User
+authRouter.get('/status', async (req, res) => {
+    const user_details = await User.findByPk(req.user.id)
+    res.json(user_details)
+})
+
+//Update User
+authRouter.put('/update', (req,res) => {
+    User.findByPk(req.user.id).then(user => {
+        user.password = req.query.password
+        user.save().then(user => {
+            if(!user){
+                return res.status(404).send('User not found')
+            }
+            res.json({message: 'Successfully Updated'})
+        }
+        ).catch(err => {
+            return res.status(400).send('Error')
+        })
+    })
+})
 
 authRouter.post('/logout', (req, res) => {
     req.logout()
