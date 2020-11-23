@@ -33,7 +33,7 @@ authRouter.put('/register', isLoggedIn, async (req, res) => {
             throw {errors: [{message: 'Invalid Password'}], error: new Error()}
         }
         await User.create({username: req.query.username, password: req.query.password})
-        res.status(201).send('Registered')
+        res.status(201).json({message: 'Registered'})
     }catch(err){
         res.status(400).json(err.errors[0].message)
     }
