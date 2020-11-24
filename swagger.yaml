@@ -1,0 +1,29 @@
+swagger: "2.0"
+info:
+  title: Express-Sequelize-Passport-Example-API
+  version: 1.0
+
+host: localhost:4000
+basePath: /
+
+paths:
+  /user/login:
+    post: 
+      summary: User Login
+      parameters:
+        - in: query
+          name: username
+          type: string
+          required: true
+          description: Your username
+        - in: query
+          name: password
+          type: string
+          required: true
+          description: Your password
+      responses:
+  
+  /user/register:
+    put:
+
+  /user/logout:
